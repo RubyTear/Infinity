@@ -1,0 +1,17 @@
+module sample
+{
+	module samplePhoneCORBA
+	{
+    	interface HandyPhoneIF
+    	{
+        	// Connect method
+        	boolean connect(in wstring senderName, in wstring recieverName);
+
+        	// disConnect method
+        	boolean disConnect(in wstring senderName, in wstring recieverName);
+
+        	// send message
+        	boolean sendMessage(in wstring senderName, in wstring message);
+    	};
+    };
+};

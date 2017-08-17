@@ -1,0 +1,14 @@
+module sample
+{
+	module corbaexp
+	{
+		module HelloApp
+		{
+  			interface Hello
+  			{
+    			string sayHello();
+    			oneway void shutdown();
+  			};
+		};
+	};
+};
