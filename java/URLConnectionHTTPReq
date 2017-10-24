@@ -1,0 +1,21 @@
+package tst.y2017.m09;
+import java.io.BufferedReader;import java.io.InputStream;import java.io.InputStreamReader;import java.io.OutputStream;import java.net.CookieHandler;import java.net.CookieManager;import java.net.HttpURLConnection;import java.net.URL;
+public class URLConnectionHTTPReq {
+ /**  * @param args  */ public static void main(String[] args) {  URLConnectionHTTPReq.doPost(    "http://szlsy005atz.alico.corp:8080/symphony/login",    "application/x-www-form-urlencoded",    "username=admin&password=mo2art"); }
+ public static String doPost(String strPostUrl, String strContentType,   String formParam) {
+  HttpURLConnection con = null;  StringBuilder result = new StringBuilder();
+  try {
+   URL url = new URL(strPostUrl);
+   con = (HttpURLConnection) url.openConnection();
+   con.setDoOutput(true);   con.setDoInput(true);   con.setInstanceFollowRedirects(false);
+   CookieManager manager = new CookieManager();   CookieHandler.setDefault(manager);
+   con.setRequestMethod("POST");   con.setRequestProperty(     "User-Agent",     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.1; WOW64; Trident/7.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729;");   con.setRequestProperty("Connection", "Keep-Alive");   con.setRequestProperty("Referer",     "http://szlsy005atz.alico.corp:8080/symphony/login");   con.setRequestProperty("Content-Type", strContentType);   OutputStream out = con.getOutputStream();   out.write(formParam.getBytes("UTF_8"));   out.flush();   con.connect();   out.close();
+   String cookie = con.getHeaderField("Set-Cookie");
+   URL newURL = new URL(     "http://szlsy005atz.alico.corp:8080/symphony/tracking/feed/150");   HttpURLConnection new_con = (HttpURLConnection) newURL     .openConnection();
+   if (cookie != null) {    new_con.setRequestProperty("Cookie", cookie);    System.out.println(cookie);   }   new_con.connect();
+   // HTTPレスポンスコード   int status = new_con.getResponseCode();   if (status == HttpURLConnection.HTTP_OK) {    // 通信に成功した    // テキストを取得する    final InputStream in = new_con.getInputStream();    String encoding = new_con.getContentEncoding();    if (null == encoding) {     encoding = "UTF-8";    }    final InputStreamReader inReader = new InputStreamReader(in,      encoding);    final BufferedReader bufReader = new BufferedReader(inReader);    String line = null;    // 1行ずつテキストを読み込む    while ((line = bufReader.readLine()) != null) {     result.append(line);     System.out.println(line);    }
+    bufReader.close();    inReader.close();    in.close();   } else {    System.out.println(status);   }
+   if (new_con != null) {    // コネクションを切断    con.disconnect();   }  } catch (Exception e1) {   e1.printStackTrace();  } finally {   if (con != null) {    // コネクションを切断    con.disconnect();   }  }
+  return result.toString();
+ }
+}
