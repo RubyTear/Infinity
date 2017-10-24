@@ -1,154 +1,24 @@
 package sample.samplePhone;
-
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.Socket;
-import java.util.ArrayList;
-
-/**
- * ƒƒbƒZ[ƒWóMƒIƒuƒWƒFƒNƒgB
- * 
- * @author Acroquest
- * 
- */
-public final class MessageReciever implements Runnable {
-	/** Œg‘Ñ“d˜bƒAƒvƒŠŠÇ—ƒIƒuƒWƒFƒNƒgB */
-	private PhoneController controller_;
-
-	/** ƒƒbƒZ[ƒWóMƒoƒbƒtƒ@B */
-	private BufferedReader buffReader_;
-
-	/** óMˆ—‚ªI—¹‚µ‚½‚©”»’f‚·‚éƒtƒ‰ƒOB */
-	private boolean isReading_;
-
-	/**
-	 * ŠO•”‚©‚çŒÄ‚Ño‚µ•s‰Â”\‚ÈƒRƒ“ƒXƒgƒ‰ƒNƒ^B
-	 * 
-	 * @param controller
-	 *            Œg‘Ñ“d˜bƒAƒvƒŠŠÇ—ƒIƒuƒWƒFƒNƒg
-	 * @param bufferedReader
-	 *            ƒoƒbƒtƒ@ƒŠ[ƒ_
-	 */
-	private MessageReciever(PhoneController controller,
-			BufferedReader bufferedReader) {
-		// ƒtƒB[ƒ‹ƒh‚Ì‰Šú‰»
-		this.controller_ = controller;
-		this.buffReader_ = bufferedReader;
-		this.isReading_ = true;
-	}
-
-	/**
-	 * ƒƒbƒZ[ƒWóMƒIƒuƒWƒFƒNƒg‚ğ¶¬‚·‚éB
-	 * 
-	 * @param controller
-	 *            Œg‘Ñ“d˜bƒAƒvƒŠŠÇ—ƒIƒuƒWƒFƒNƒg
-	 * @param socket
-	 *            ƒƒbƒZ[ƒW‚ğóM‚·‚éƒ\ƒPƒbƒg
-	 * @return ƒƒbƒZ[ƒWóMƒIƒuƒWƒFƒNƒg
-	 * @throws IOException
-	 *             “ü—ÍƒXƒgƒŠ[ƒ€‚Ìæ“¾‚É¸”s‚µ‚½ê‡‚ÉƒXƒ[‚·‚é
-	 */
-	public static MessageReciever createReciever(PhoneController controller,
-			Socket socket) throws IOException {
-		InputStream inputStream = socket.getInputStream();
-		InputStreamReader inputReader = new InputStreamReader(inputStream,
-				PhoneConstant.ENCODE_UTF_8);
-		BufferedReader bufferedReader = new BufferedReader(inputReader);
-
-		MessageReciever returnReciever = new MessageReciever(controller,
-				bufferedReader);
-		return returnReciever;
-	}
-
-	/**
-	 * ƒ\ƒPƒbƒg‚©‚çƒƒbƒZ[ƒW‚ğíóM‚·‚éˆ—B
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	@Override
-	public void run() {
-		String message = null;
-
-		while (this.getReading() == true) {
-			// “ü—ÍƒXƒgƒŠ[ƒ€‚ªÚ‘±‚³‚ê‚Ä‚¢‚È‚¢ê‡AØ’fˆ—‚ğs‚¤
-			if (this.buffReader_ == null) {
-				if (this.controller_.isNormalDisconnect_() == false) {
-					this.controller_.terminateConnection();
-					break;
-				}
-			}
-
-			try {
-				message = this.buffReader_.readLine();
-			} catch (IOException ioExc) {
-				// Ú‘±‚ğˆÙíI—¹‚·‚é
-				if (this.controller_.isNormalDisconnect_() == false) {
-					this.controller_.terminateConnection();
-					break;
-				}
-			}
-
-			// ‘Šè‘¤‚©‚çÚ‘±‚ªØ‚ê‚½ê‡
-			if (message == null) {
-				this.controller_.setNormalDisconnect_(true);
-				this.controller_.terminateConnection(this);
-				break;
-			}
-
-			// ƒOƒ‹[ƒvƒ‚[ƒh‚Å‘¼l(orther Socket)‚É‘—M‚·‚éB
-			if (this.controller_.isPhoneGroupMode_()) {
-				ArrayList<MessageSender> msgSenderList_ = this.controller_
-						.getMsgSenderList_();
-				int skipClientNum = this.controller_.getMsgRecieverList_()
-						.indexOf(this);
-
-				for (int i = 0; i < msgSenderList_.size(); i++) {
-					if (i == skipClientNum) {
-						continue;
-					}
-					msgSenderList_.get(i).sendMessage(message);
-				}
-			}
-
-			this.controller_.recieveMessage(message);
-		}
-
-		// I—¹ˆ—‚ğs‚¤
-		if (this.buffReader_ != null) {
-			try {
-				this.buffReader_.close();
-			} catch (IOException ioExc) {
-				// ‰½‚à‚µ‚È‚¢
-			} finally {
-				this.buffReader_ = null;
-			}
-		}
-
-		// ‘—M‚ªI—¹‚µ‚½‚ç³íI—¹ƒtƒ‰ƒO‚ğ‰Šú‰»‚·‚éB
-		// this.controller_.setNormalDisconnect_(false);
-	}
-
-	/**
-	 * I—¹ó‘Ô‚Éİ’è‚·‚éB
-	 * 
-	 */
-	public synchronized void terminate() {
-		this.isReading_ = false;
-	}
-
-	/**
-	 * ƒƒbƒZ[ƒWóMó‘Ô‚ªI—¹‚©’²‚×‚éB true‚È‚ç‚ÎóM‚·‚éó‘ÔAfalse‚È‚ç‚ÎóM‚µ‚È‚¢ó‘ÔB
-	 * 
-	 * @return ƒƒbƒZ[ƒWóMó‘Ô
-	 */
-	public synchronized boolean getReading() {
-		return this.isReading_;
-	}
-
+/******************************************************************************Â * All of this source code are all rights reserved by Acroquest Co., Ltd. .Â ******************************************************************************/
+import java.io.BufferedReader;import java.io.IOException;import java.io.InputStream;import java.io.InputStreamReader;import java.net.Socket;import java.util.ArrayList;
+/**Â * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚Â * Â * @author AcroquestÂ * Â */public final class MessageReciever implements Runnable {Â /** æºå¸¯é›»è©±ã‚¢ãƒ—ãƒªç®¡ç†ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã€‚ */Â private PhoneController controller_;
+Â /** ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡ãƒãƒƒãƒ•ã‚¡ã€‚ */Â private BufferedReader buffReader_;
+Â /** å—ä¿¡å‡¦ç†ãŒçµ‚äº†ã—ãŸã‹åˆ¤æ–­ã™ã‚‹ãƒ•ãƒ©ã‚°ã€‚ */Â private boolean isReading_;
+Â /** å—ä¿¡å‡¦ç†ãŒçµ‚äº†ã—ãŸã‹åˆ¤æ–­ã™ã‚‹ãƒ•ãƒ©ã‚°ã€‚ */Â private Socket connectedSoket_;
+Â /**Â  * å¤–éƒ¨ã‹ã‚‰å‘¼ã³å‡ºã—ä¸å¯èƒ½ãªã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã€‚Â  * Â  * @param controllerÂ  *Â Â Â Â Â Â Â Â Â Â Â  æºå¸¯é›»è©±ã‚¢ãƒ—ãƒªç®¡ç†ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆÂ  * @param bufferedReaderÂ  *Â Â Â Â Â Â Â Â Â Â Â  ãƒãƒƒãƒ•ã‚¡ãƒªãƒ¼ãƒ€Â  */Â private MessageReciever(PhoneController controller, Socket socket,Â Â Â BufferedReader bufferedReader) {Â Â // ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰ã®åˆæœŸåŒ–Â Â this.controller_ = controller;Â Â this.connectedSoket_ = socket;Â Â this.buffReader_ = bufferedReader;Â Â this.isReading_ = true;Â }
+Â /**Â  * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆã™ã‚‹ã€‚Â  * Â  * @param controllerÂ  *Â Â Â Â Â Â Â Â Â Â Â  æºå¸¯é›»è©±ã‚¢ãƒ—ãƒªç®¡ç†ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆÂ  * @param socketÂ  *Â Â Â Â Â Â Â Â Â Â Â  ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å—ä¿¡ã™ã‚‹ã‚½ã‚±ãƒƒãƒˆÂ  * @return ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆÂ  * @throws IOExceptionÂ  *Â Â Â Â Â Â Â Â Â Â Â Â  å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ã®å–å¾—ã«å¤±æ•—ã—ãŸå ´åˆã«ã‚¹ãƒ­ãƒ¼ã™ã‚‹Â  */Â public static MessageReciever createReciever(PhoneController controller,Â Â Â Socket socket) throws IOException {
+Â Â InputStream inputStream = socket.getInputStream();Â Â InputStreamReader inputReader = new InputStreamReader(inputStream,Â Â Â Â PhoneConstant.ENCODE_UTF_8);Â Â BufferedReader bufferedReader = new BufferedReader(inputReader);
+Â Â MessageReciever returnReciever = new MessageReciever(controller,Â Â Â Â socket, bufferedReader);Â Â return returnReciever;Â }
+Â /**Â  * ã‚½ã‚±ãƒƒãƒˆã‹ã‚‰ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’å¸¸æ™‚å—ä¿¡ã™ã‚‹å‡¦ç†ã€‚Â  * Â  * @see java.lang.Runnable#run()Â  */Â @OverrideÂ public void run() {Â Â String message = null;
+Â Â while (this.getReading() == true) {Â Â Â // ç¶™ç¶šæ¥ç¶šæˆç«‹ãƒã‚§ãƒƒã‚¯Â Â Â if (connectedSoket_.getInetAddress() == null) {Â Â Â Â // æ¥ç¶šã‚’ç•°å¸¸çµ‚äº†ã™ã‚‹Â Â Â Â if (this.controller_.isNormalDisconnect_() == false) {Â Â Â Â Â this.controller_.terminateConnection();Â Â Â Â Â break;Â Â Â Â }Â Â Â }
+Â Â Â // å…¥åŠ›ã‚¹ãƒˆãƒªãƒ¼ãƒ ãŒæ¥ç¶šã•ã‚Œã¦ã„ãªã„å ´åˆã€åˆ‡æ–­å‡¦ç†ã‚’è¡Œã†Â Â Â if (this.buffReader_ == null) {Â Â Â Â if (this.controller_.isNormalDisconnect_() == false) {Â Â Â Â Â this.controller_.terminateConnection();Â Â Â Â Â break;Â Â Â Â }Â Â Â }
+Â Â Â try {Â Â Â Â message = this.buffReader_.readLine();Â Â Â } catch (IOException ioExc) {Â Â Â Â // æ¥ç¶šã‚’ç•°å¸¸çµ‚äº†ã™ã‚‹Â Â Â Â if (this.controller_.isNormalDisconnect_() == false) {Â Â Â Â Â this.controller_.terminateConnection();Â Â Â Â Â break;Â Â Â Â }Â Â Â }
+Â Â Â // ç›¸æ‰‹å´ã‹ã‚‰æ¥ç¶šãŒåˆ‡ã‚ŒãŸå ´åˆÂ Â Â if (message == null) {Â Â Â Â this.controller_.setNormalDisconnect_(true);Â Â Â Â this.controller_.terminateConnection(this);Â Â Â Â break;Â Â Â }
+Â Â Â // ã‚°ãƒ«ãƒ¼ãƒ—ãƒ¢ãƒ¼ãƒ‰ã§ä»–äºº(orther Socket)ã«é€ä¿¡ã™ã‚‹ã€‚Â Â Â if (this.controller_.isPhoneGroupMode_()) {Â Â Â Â ArrayList<MessageSender> msgSenderList_ = this.controller_Â Â Â Â Â Â .getMsgSenderList_();Â Â Â Â int skipClientNum = this.controller_.getMsgRecieverList_()Â Â Â Â Â Â .indexOf(this);
+Â Â Â Â for (int i = 0; i < msgSenderList_.size(); i++) {Â Â Â Â Â if (i == skipClientNum) {Â Â Â Â Â Â continue;Â Â Â Â Â }Â Â Â Â Â msgSenderList_.get(i).sendMessage(message);Â Â Â Â }Â Â Â }
+Â Â Â this.controller_.recieveMessage(message);Â Â }
+Â Â // çµ‚äº†å‡¦ç†ã‚’è¡Œã†Â Â if (this.buffReader_ != null) {Â Â Â try {Â Â Â Â this.buffReader_.close();Â Â Â } catch (IOException ioExc) {Â Â Â Â // ä½•ã‚‚ã—ãªã„Â Â Â } finally {Â Â Â Â this.buffReader_ = null;Â Â Â }Â Â }
+Â Â // é€ä¿¡ãŒçµ‚äº†ã—ãŸã‚‰æ­£å¸¸çµ‚äº†ãƒ•ãƒ©ã‚°ã‚’åˆæœŸåŒ–ã™ã‚‹ã€‚Â Â // this.controller_.setNormalDisconnect_(false);Â }
+Â /**Â  * çµ‚äº†çŠ¶æ…‹ã«è¨­å®šã™ã‚‹ã€‚Â  * Â  */Â public synchronized void terminate() {Â Â this.isReading_ = false;Â }
+Â /**Â  * ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡çŠ¶æ…‹ãŒçµ‚äº†ã‹èª¿ã¹ã‚‹ã€‚ trueãªã‚‰ã°å—ä¿¡ã™ã‚‹çŠ¶æ…‹ã€falseãªã‚‰ã°å—ä¿¡ã—ãªã„çŠ¶æ…‹ã€‚Â  * Â  * @return ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸å—ä¿¡çŠ¶æ…‹Â  */Â public synchronized boolean getReading() {Â Â return this.isReading_;Â }
 }
