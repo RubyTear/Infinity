@@ -1,0 +1,21 @@
+分散オブジェクト技術
+IDL（Interface Definition Language）
+idlj
+CORBA(Common Object Request Broker Architecture)
+「PaaS」「IaaS」
+IaaS（Infrastructure as a Service）
+クラウドサービス
+ネーミングサーバ(tnameserv)
+テンプレートエンジン
+EJS
+コンポーネントトランザクションサービス
+キャッシュ
+java RMI
+rmic、rmiregistry
+applet
+POA(Portable Object Adapter)
+AWS、Oracle Cloud
+Microsoft Azure
+Google Cloud Platform
+IBM BlueMix、
+DDNS
