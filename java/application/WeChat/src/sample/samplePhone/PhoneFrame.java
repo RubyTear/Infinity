@@ -1,9 +1,5 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -42,8 +38,6 @@ import javax.swing.event.DocumentListener;
 
 /**
  * 携帯電話の表示ウィンドウを表す。
- * 
- * @author Acroquest
  * 
  */
 public class PhoneFrame extends JFrame {
@@ -99,8 +93,7 @@ public class PhoneFrame extends JFrame {
 
 	/** iconImage取得。 */
 	// ImageIcon ICON = new ImageIcon("./icon/wechat2.png");
-	Image ICON = new ImageIcon(this.getClass().getClassLoader()
-			.getResource("wechat2.png")).getImage();
+	Image ICON = new ImageIcon(this.getClass().getClassLoader().getResource("wechat2.png")).getImage();
 
 	private JFrame frame;
 
@@ -134,8 +127,7 @@ public class PhoneFrame extends JFrame {
 		// .getImage();
 		// img = this.ICON.getImage();
 
-		imgLight = new ImageIcon(this.getClass().getClassLoader()
-				.getResource("tray_icon_light.gif")).getImage();
+		imgLight = new ImageIcon(this.getClass().getClassLoader().getResource("tray_icon_light.gif")).getImage();
 
 		createPopupMenu();
 
@@ -143,14 +135,11 @@ public class PhoneFrame extends JFrame {
 
 		this.setActionListener(controller);
 
-		JPanel northPanel = this.createNorthPanel(this.ownPortText_,
-				this.powerTButton_);
+		JPanel northPanel = this.createNorthPanel(this.ownPortText_, this.powerTButton_);
 		JPanel centorPanel = this.createCentorPanel(this.displayArea_);
-		JPanel southPanel = this.createSouthPanel(this.connectHostText_,
-				this.connectPortText_, this.connectTButton_, this.messageText_,
-				this.sendButton_);
-		JPanel phonePanel = this.createPhonePanel(northPanel, centorPanel,
-				southPanel);
+		JPanel southPanel = this.createSouthPanel(this.connectHostText_, this.connectPortText_, this.connectTButton_,
+				this.messageText_, this.sendButton_);
+		JPanel phonePanel = this.createPhonePanel(northPanel, centorPanel, southPanel);
 
 		Container container = this.getContentPane();
 		container.add(phonePanel);
@@ -213,10 +202,8 @@ public class PhoneFrame extends JFrame {
 	 */
 	public synchronized void appendText(String text) {
 		this.displayArea_.append(text + "\n");
-		this.distplayScrollPane_.getViewport().scrollRectToVisible(
-				new Rectangle(0, Integer.MAX_VALUE - 1, 1, 1));
-		this.displayArea_.setCaretPosition(this.displayArea_.getDocument()
-				.getLength());
+		this.distplayScrollPane_.getViewport().scrollRectToVisible(new Rectangle(0, Integer.MAX_VALUE - 1, 1, 1));
+		this.displayArea_.setCaretPosition(this.displayArea_.getDocument().getLength());
 	}
 
 	/**
@@ -235,9 +222,7 @@ public class PhoneFrame extends JFrame {
 	public synchronized void showErrorDialog(String errMsg) {
 		System.err.println(errMsg);
 		try {
-			this.appendText(new String(errMsg
-					.getBytes(PhoneConstant.ENCODE_UTF_8),
-					PhoneConstant.ENCODE_UTF_8));
+			this.appendText(new String(errMsg.getBytes(PhoneConstant.ENCODE_UTF_8), PhoneConstant.ENCODE_UTF_8));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -428,10 +413,8 @@ public class PhoneFrame extends JFrame {
 		this.sendButton_.setPreferredSize(BUTTON_PERFORMED_SIZE);
 
 		this.powerTButton_.setActionCommand(PhoneConstant.CMD_POWERED_BUTTON);
-		this.connectTButton_
-				.setActionCommand(PhoneConstant.CMD_CONNECT_SERVER_BUTTON);
-		this.sendButton_
-				.setActionCommand(PhoneConstant.CMD_SEND_MESSAGE_BUTTON);
+		this.connectTButton_.setActionCommand(PhoneConstant.CMD_CONNECT_SERVER_BUTTON);
+		this.sendButton_.setActionCommand(PhoneConstant.CMD_SEND_MESSAGE_BUTTON);
 
 		this.setViewByStatus(PhoneStatus.POWER_OFF);
 
@@ -485,34 +468,35 @@ public class PhoneFrame extends JFrame {
 			public void windowActivated(WindowEvent e) {
 				replaceImageWithDelete(frame.getIconImage());
 				// frame.removeWindowListener(frame.getWindowListeners());
-				// trayIcon.removeMouseListener(frame.getMouseListeners());
+				for(int i = 1; i< trayIcon.getMouseListeners().length; i++){
+					 trayIcon.removeMouseListener(trayIcon.getMouseListeners()[i]);
+				}
 
 			}
 		});
-		this.displayArea_.getDocument().addDocumentListener(
-				new DocumentListener() {
+		this.displayArea_.getDocument().addDocumentListener(new DocumentListener() {
 
-					@Override
-					public void removeUpdate(DocumentEvent e) {
-					}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+			}
 
-					@Override
-					public void insertUpdate(DocumentEvent e) {
-						if (!frame.isActive()) {
-							onAndOffLight(imgLight, null);
-							displayMessage("WeChatメッセージ", "メッセージを確認してしてください！！");
-						}
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				if (!frame.isActive()) {
+					onAndOffLight(imgLight, null);
+					displayMessage("WeChatメッセージ", "メッセージを確認してしてください！！");
+				}
 
-					}
+			}
 
-					@Override
-					public void changedUpdate(DocumentEvent e) {
-						if (!frame.isActive()) {
-							onAndOffLight(imgLight, null);
-							displayMessage("WeChatメッセージ", "メッセージを確認してしてください！！");
-						}
-					}
-				});
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (!frame.isActive()) {
+					onAndOffLight(imgLight, null);
+					displayMessage("WeChatメッセージ", "メッセージを確認してしてください！！");
+				}
+			}
+		});
 	}
 
 	/**
@@ -524,8 +508,7 @@ public class PhoneFrame extends JFrame {
 	 *            接続待ち設定ボタン
 	 * @return 自ポート番号入力パネル
 	 */
-	private JPanel createNorthPanel(JTextField portText,
-			AbstractButton powerButton) {
+	private JPanel createNorthPanel(JTextField portText, AbstractButton powerButton) {
 		JPanel returnPanel = new JPanel();
 		FlowLayout flowLayout = new FlowLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
@@ -575,9 +558,8 @@ public class PhoneFrame extends JFrame {
 	 *            送信ボタン
 	 * @return 送信設定パネル
 	 */
-	private JPanel createSouthPanel(JTextField hostText, JTextField portText,
-			AbstractButton connectButton, JTextField messageText,
-			AbstractButton sendButton) {
+	private JPanel createSouthPanel(JTextField hostText, JTextField portText, AbstractButton connectButton,
+			JTextField messageText, AbstractButton sendButton) {
 		// 送信先設定パネルの生成
 		JPanel connectPanel = new JPanel();
 		connectPanel.setLayout(new FlowLayout());
@@ -681,8 +663,7 @@ public class PhoneFrame extends JFrame {
 	 */
 	public void displayMessage(String caption, String text) {
 		if (caption != null || text != null) {
-			this.trayIcon.displayMessage(caption, text,
-					TrayIcon.MessageType.INFO);
+			this.trayIcon.displayMessage(caption, text, TrayIcon.MessageType.INFO);
 		}
 	}
 

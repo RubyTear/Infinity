@@ -1,9 +1,5 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -16,9 +12,6 @@ import javax.swing.JCheckBox;
 
 /**
  * 携帯電話アプリのアクションリスナ。
- * 
- * @author Acroquest
- * 
  */
 public class PhoneListener implements ActionListener, KeyListener, ItemListener {
 	/** 携帯電話アプリ管理オブジェクト。 */
@@ -65,24 +58,20 @@ public class PhoneListener implements ActionListener, KeyListener, ItemListener 
 		boolean isPushed = buttonSource.isSelected();
 
 		// 電源ボタンを押下し、電源をオンにした場合
-		if ((PhoneConstant.CMD_POWERED_BUTTON.equals(cmd) == true)
-				&& (isPushed == true)) {
+		if ((PhoneConstant.CMD_POWERED_BUTTON.equals(cmd) == true) && (isPushed == true)) {
 			this.controller_.startPhoneServer();
 		}
 		// 電源ボタンを押下し、電源をオフにした場合
-		else if ((PhoneConstant.CMD_POWERED_BUTTON.equals(cmd) == true)
-				&& (isPushed == false)) {
+		else if ((PhoneConstant.CMD_POWERED_BUTTON.equals(cmd) == true) && (isPushed == false)) {
 			this.controller_.setNormalDisconnect_(true);
 			this.controller_.terminatePhoneServer();
 		}
 		// 接続ボタンを押下し、接続中状態に移行した場合
-		else if ((PhoneConstant.CMD_CONNECT_SERVER_BUTTON.equals(cmd) == true)
-				&& (isPushed == true)) {
+		else if ((PhoneConstant.CMD_CONNECT_SERVER_BUTTON.equals(cmd) == true) && (isPushed == true)) {
 			this.controller_.startConnection();
 		}
 		// 接続ボタンを押下し、接続中状態を解除した場合
-		else if ((PhoneConstant.CMD_CONNECT_SERVER_BUTTON.equals(cmd) == true)
-				&& (isPushed == false)) {
+		else if ((PhoneConstant.CMD_CONNECT_SERVER_BUTTON.equals(cmd) == true) && (isPushed == false)) {
 			this.controller_.setNormalDisconnect_(true);
 			this.controller_.terminateConnection();
 		}
@@ -114,12 +103,10 @@ public class PhoneListener implements ActionListener, KeyListener, ItemListener 
 		if (boxLabel.equals("P2P Mode")) {
 
 			if (e.getStateChange() == 1) {
-				this.controller_
-						.setPhoneP2PMode_(PhoneConstant.NON_INTERRUPT_MODE);
+				this.controller_.setPhoneP2PMode_(PhoneConstant.NON_INTERRUPT_MODE);
 				this.controller_.toggleConnentionStatus();
 			} else if (e.getStateChange() == 2) {
-				this.controller_
-						.setPhoneP2PMode_(!PhoneConstant.NON_INTERRUPT_MODE);
+				this.controller_.setPhoneP2PMode_(!PhoneConstant.NON_INTERRUPT_MODE);
 				this.controller_.toggleConnentionStatus();
 			} else {
 

@@ -1,13 +1,7 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 /**
  * 定数を定義するインタフェース。
- * 
- * @author Acroquest
  * 
  */
 public interface PhoneConstant {
@@ -28,7 +22,7 @@ public interface PhoneConstant {
 
 	/** 受送信エンコード指定 */
 	public static final String ENCODE_UTF_8 = "UTF-8";
-	
+
 	/** P2P(point-to-point)モード */
 	public static final boolean NON_INTERRUPT_MODE = true;
 }

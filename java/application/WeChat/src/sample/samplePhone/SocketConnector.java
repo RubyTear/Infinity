@@ -1,9 +1,5 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
@@ -12,9 +8,6 @@ import java.net.SocketTimeoutException;
 
 /**
  * 外部からのソケット接続を受け付けるクラス。
- * 
- * @author Acroquest
- * 
  */
 public final class SocketConnector implements Runnable {
 	/** 携帯電話アプリの制御クラス。 */
@@ -50,8 +43,7 @@ public final class SocketConnector implements Runnable {
 	 * @throws IOException
 	 *             サーバソケットの生成に失敗した場合にスローする
 	 */
-	public static SocketConnector createConnector(PhoneController controller,
-			int port) throws IOException {
+	public static SocketConnector createConnector(PhoneController controller, int port) throws IOException {
 		SocketConnector connector = new SocketConnector(controller);
 		connector.initSocketServer(port);
 
@@ -162,15 +154,11 @@ public final class SocketConnector implements Runnable {
 		}
 
 		// 現在既に通信中の場合は、この接続を破棄する
-		if ((connectedSocket != null)
-				&& (this.isRecievedNow() == true)
-				&& (this.controller_.isPhoneP2PMode_() || this.controller_
-						.isPhoneGroupMode_() == false)) {
+		if ((connectedSocket != null) && (this.isRecievedNow() == true)
+				&& (this.controller_.isPhoneP2PMode_() || this.controller_.isPhoneGroupMode_() == false)) {
 			String errMsg;
 			try {
-				errMsg = new String(
-						"既に通信中のため、接続できません."
-								.getBytes(PhoneConstant.ENCODE_UTF_8),
+				errMsg = new String("既に通信中のため、接続できません.".getBytes(PhoneConstant.ENCODE_UTF_8),
 						PhoneConstant.ENCODE_UTF_8);
 				this.controller_.cancelNewConnection(connectedSocket, errMsg);
 				connectedSocket = null;

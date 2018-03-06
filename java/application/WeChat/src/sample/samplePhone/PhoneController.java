@@ -1,9 +1,5 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 import java.awt.Dimension;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -20,8 +16,6 @@ import java.util.HashMap;
 
 /**
  * 携帯電話アプリの制御管理を行うクラス。
- * 
- * @author Acroquest
  * 
  */
 public class PhoneController {
@@ -145,8 +139,7 @@ public class PhoneController {
 		int ownPortNumber = this.getPortNumberFromStr(ownPortStr);
 
 		if (ownPortNumber == INVALID_PORT_NUMBER) {
-			String errMsg = "自ポート番号は " + MINMUM_PORT_NUMBER + " ～ "
-					+ MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
+			String errMsg = "自ポート番号は " + MINMUM_PORT_NUMBER + " ～ " + MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
 			this.phoneFrame_.setViewByStatus(PhoneStatus.POWER_OFF);
 			this.showErrorMessage(errMsg);
 
@@ -154,8 +147,7 @@ public class PhoneController {
 		}
 
 		try {
-			this.socketConnector_ = SocketConnector.createConnector(this,
-					ownPortNumber);
+			this.socketConnector_ = SocketConnector.createConnector(this, ownPortNumber);
 		} catch (IOException ioExc) {
 			String errMsg = "ポートの確保に失敗しました.";
 			this.showErrorMessage(errMsg);
@@ -175,8 +167,7 @@ public class PhoneController {
 	public void startPhoneServer(int groupHostPort) {
 
 		if (groupHostPort == INVALID_PORT_NUMBER) {
-			String errMsg = "自ポート番号は " + MINMUM_PORT_NUMBER + " ～ "
-					+ MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
+			String errMsg = "自ポート番号は " + MINMUM_PORT_NUMBER + " ～ " + MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
 			this.showErrorMessage(errMsg);
 			this.phoneFrame_.setViewByStatus(PhoneStatus.POWER_OFF);
 
@@ -184,8 +175,7 @@ public class PhoneController {
 		}
 
 		try {
-			this.socketConnector_ = SocketConnector.createConnector(this,
-					groupHostPort);
+			this.socketConnector_ = SocketConnector.createConnector(this, groupHostPort);
 		} catch (IOException ioExc) {
 			String errMsg = "ポートの確保に失敗しました.";
 			this.showErrorMessage(errMsg);
@@ -239,8 +229,7 @@ public class PhoneController {
 	public synchronized boolean acceptSocket(Socket socket) {
 		PhoneController.numConnection_ += 1;
 		try {
-			MessageReciever msgReciever = MessageReciever.createReciever(this,
-					socket);
+			MessageReciever msgReciever = MessageReciever.createReciever(this, socket);
 			this.msgRecieverList_.add(msgReciever);
 			MessageSender msgSender = MessageSender.createSender(this, socket);
 			this.msgSenderList_.add(msgSender);
@@ -261,8 +250,7 @@ public class PhoneController {
 				// 相手に接続が成功したメッセージを送信
 				String message;
 				try {
-					message = InetAddress.getLocalHost().getHostName()
-							+ "に接続しました.";
+					message = InetAddress.getLocalHost().getHostName() + "に接続しました.";
 					for (MessageSender msgSenderMemb : this.msgSenderList_) {
 						msgSenderMemb.sendMessage(message);
 					}
@@ -294,8 +282,7 @@ public class PhoneController {
 		int portNumber = this.getPortNumberFromStr(portStr);
 
 		if (portNumber == INVALID_PORT_NUMBER) {
-			String errMsg = "接続先ポート番号は " + MINMUM_PORT_NUMBER + " ～ "
-					+ MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
+			String errMsg = "接続先ポート番号は " + MINMUM_PORT_NUMBER + " ～ " + MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
 			this.showErrorMessage(errMsg);
 			this.phoneFrame_.setViewByStatus(PhoneStatus.NO_CONNECTION);
 			return;
@@ -344,8 +331,7 @@ public class PhoneController {
 			PhoneController.numConnection_ -= 1;
 		}
 		this.closeConnectedSocketStream();
-		if (this.socketConnector_ != null
-				&& PhoneController.numConnection_ == 0) {
+		if (this.socketConnector_ != null && PhoneController.numConnection_ == 0) {
 			this.socketConnector_.setRecievedNow(false);
 		}
 
@@ -363,8 +349,7 @@ public class PhoneController {
 			PhoneController.numConnection_ -= 1;
 		}
 		this.closeConnectedSocketStream(msgReciever);
-		if (this.socketConnector_ != null
-				&& PhoneController.numConnection_ == 0) {
+		if (this.socketConnector_ != null && PhoneController.numConnection_ == 0) {
 			this.socketConnector_.setRecievedNow(false);
 		}
 
@@ -397,9 +382,8 @@ public class PhoneController {
 		}
 
 		try {
-			this.phoneFrame_.appendText(new String(message
-					.getBytes(PhoneConstant.ENCODE_UTF_8),
-					PhoneConstant.ENCODE_UTF_8));
+			this.phoneFrame_
+					.appendText(new String(message.getBytes(PhoneConstant.ENCODE_UTF_8), PhoneConstant.ENCODE_UTF_8));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -414,9 +398,8 @@ public class PhoneController {
 	 */
 	public synchronized void recieveMessage(String message) {
 		try {
-			this.phoneFrame_.appendText(new String(message
-					.getBytes(PhoneConstant.ENCODE_UTF_8),
-					PhoneConstant.ENCODE_UTF_8));
+			this.phoneFrame_
+					.appendText(new String(message.getBytes(PhoneConstant.ENCODE_UTF_8), PhoneConstant.ENCODE_UTF_8));
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -454,8 +437,7 @@ public class PhoneController {
 
 		try {
 			OutputStream output = socket.getOutputStream();
-			OutputStreamWriter writer = new OutputStreamWriter(output,
-					PhoneConstant.ENCODE_UTF_8);
+			OutputStreamWriter writer = new OutputStreamWriter(output, PhoneConstant.ENCODE_UTF_8);
 			buffWriter = new BufferedWriter(writer);
 			buffWriter.write(sendMsg);
 		} catch (IOException ioExc) {
@@ -494,8 +476,7 @@ public class PhoneController {
 		try {
 			portNumber = Integer.parseInt(portStr);
 
-			if ((portNumber < MINMUM_PORT_NUMBER)
-					|| (MAXMUM_PORT_NUMBER < portNumber)) {
+			if ((portNumber < MINMUM_PORT_NUMBER) || (MAXMUM_PORT_NUMBER < portNumber)) {
 				portNumber = INVALID_PORT_NUMBER;
 			}
 		} catch (NumberFormatException nfExc) {
@@ -519,10 +500,8 @@ public class PhoneController {
 
 		try {
 			// 接続先ホストとポートを指定してサーバに接続する
-			InetSocketAddress socketAddress = new InetSocketAddress(address,
-					portNumber);
-			connectSocket.connect(socketAddress,
-					PhoneConstant.TIMEOUT_SOCKET_CONNECT);
+			InetSocketAddress socketAddress = new InetSocketAddress(address, portNumber);
+			connectSocket.connect(socketAddress, PhoneConstant.TIMEOUT_SOCKET_CONNECT);
 		} catch (SocketTimeoutException timeoutExc) {
 			this.showErrorMessage("タイムアウトにより接続できませんでした.");
 			connectSocket = null;
@@ -560,8 +539,7 @@ public class PhoneController {
 
 		if (this.clientReciverAdressMap_ != null) {
 			try {
-				for (Socket connectedSocket : this.clientReciverAdressMap_
-						.values()) {
+				for (Socket connectedSocket : this.clientReciverAdressMap_.values()) {
 					connectedSocket.close();
 				}
 			} catch (IOException ioExc) {
@@ -607,8 +585,7 @@ public class PhoneController {
 			this.phoneFrame_.setViewByStatus(PhoneStatus.CONNECTION);
 		} else if (PhoneController.numConnection_ <= 0) {
 			if (this.socketConnector_ == null) {
-				String errMsg = "自ポート番号は " + MINMUM_PORT_NUMBER + " ～ "
-						+ MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
+				String errMsg = "自ポート番号は " + MINMUM_PORT_NUMBER + " ～ " + MAXMUM_PORT_NUMBER + " の整数値を指定してください.";
 				this.phoneFrame_.setViewByStatus(PhoneStatus.POWER_OFF);
 				this.showErrorMessage(errMsg);
 			} else {

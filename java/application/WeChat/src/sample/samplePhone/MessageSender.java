@@ -1,9 +1,5 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -14,8 +10,6 @@ import java.net.UnknownHostException;
 
 /**
  * メッセージ送信オブジェクト。
- * 
- * @author Acroquest
  * 
  */
 public final class MessageSender {
@@ -64,11 +58,9 @@ public final class MessageSender {
 	 * @throws IOException
 	 *             出力ストリームの取得に失敗した場合に取得する
 	 */
-	public static MessageSender createSender(PhoneController controller,
-			Socket socket) throws IOException {
+	public static MessageSender createSender(PhoneController controller, Socket socket) throws IOException {
 		OutputStream output = socket.getOutputStream();
-		OutputStreamWriter writer = new OutputStreamWriter(output,
-				PhoneConstant.ENCODE_UTF_8);
+		OutputStreamWriter writer = new OutputStreamWriter(output, PhoneConstant.ENCODE_UTF_8);
 		BufferedWriter buffWriter = new BufferedWriter(writer);
 
 		MessageSender messageSender = new MessageSender(controller, buffWriter);

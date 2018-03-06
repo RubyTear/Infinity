@@ -1,17 +1,10 @@
 package sample.samplePhone;
 
-/******************************************************************************
- * All of this source code are all rights reserved by Acroquest Co., Ltd. .
- ******************************************************************************/
-
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
  * 携帯電話アプリのウィンドウリスナ。
- * 
- * @author Acroquest
- * 
  */
 public class PhoneWindowListener extends WindowAdapter {
 	/** 携帯電話アプリ管理オブジェクト。 */
