@@ -2,7 +2,7 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 SET path=%~dp0
-SET filetype=txt
+SET /P filetype=[Please enter file extention]:
 
 ECHO [FILE_TYPE]:%filetype%
 
