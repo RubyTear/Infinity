@@ -24,6 +24,9 @@ GOTO :EOF
 IF EXIST %1 (
 SET oldFile=%1
 SET newFile=%2.%3
-ECHO [SUCCEED] [FROM]!oldFile! [TO]!newFile!
+ECHO [RENAME] [FROM]!oldFile! [TO]!newFile!
 REN !oldFile! !newFile!
+IF !EERORLEVEL!==0 (
+ECHO [SUCCEED]
+)
 )
