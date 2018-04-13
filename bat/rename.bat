@@ -1,7 +1,7 @@
 @ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-SET path=%~dp0
+SET “path=%~dp0”
 SET /P filetype=[Please enter file extention]:
 
 ECHO [FILE_TYPE]:%filetype%
@@ -13,7 +13,7 @@ FOR /F “tolen=1,* delims==“ %%x IN (%path%filename.properties) DO (
 SET targetfilename=%%x
 SET newfilename=%%y
 IF !filename!==!targetfilename! (
-CALL :RENAME_FILE !file! !newfilename! %filetype%
+CALL :RENAME_FILE “!file!” “!newfilename!” %filetype%
 )
 )
 )
@@ -27,6 +27,6 @@ SET newFile=%2.%3
 ECHO [RENAME] [FROM]!oldFile! [TO]!newFile!
 REN !oldFile! !newFile!
 IF !EERORLEVEL!==0 (
-ECHO [SUCCEED]
+ECHO -[SUCCEED]
 )
 )
