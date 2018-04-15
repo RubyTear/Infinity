@@ -1,12 +1,12 @@
 @ECHO OFF
 SETLOCAL ENABLEDELAYEDEXPANSION
 
-SET “path=%~dp0”
+SET path=%~dp0
 SET /P filetype=[Please enter file extention]:
 
 ECHO [FILE_TYPE]:%filetype%
 
-FOR /R %path% %%a IN (*.%filetype%) DO (
+FOR /R "%path%" %%a IN (*.%filetype%) DO (
 SET file=%%a
 SET filename=%%~na
 FOR /F “tolen=1,* delims==“ %%x IN (%path%filename.properties) DO (
