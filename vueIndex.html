@@ -1,0 +1,612 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+<!--
+Velocity は jQuery.animate と非常によく似ています。
+JavaScript アニメーションのための良い選択です。
+-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/1.2.3/velocity.min.js"></script>
+
+
+<div id="app">
+  {{ message }}
+</div>
+
+<div id="app-4">
+  <ol>
+    <li v-for="todo in todos">
+      {{ todo.text }}
+    </li>
+  </ol>
+</div>
+
+<div id="app-6">
+  <p>{{ message }}</p>
+  <input v-model="message">
+</div>
+
+<div id="app-7">
+  <ol>
+    <!-- 
+      各 todo-item の内容を表す todo オブジェクトを与えます。
+      これにより内容は動的に変化します。
+      また後述する "key" を各コンポーネントに提供する必要があります。
+    -->
+    <todo-item
+      v-for="item in groceryList"
+      v-bind:todo="item"
+      v-bind:key="item.id"
+    ></todo-item>
+  </ol>
+</div>
+
+<div id="my-app">
+  <app-nav></app-nav>
+  <app-view>
+    <app-sidebar></app-sidebar>
+    <app-content></app-content>
+  </app-view>
+</div>
+
+<script>
+var app = new Vue({
+  el: '#app',
+  data: {
+    message: 'Hello Vue!'
+  }
+})
+
+var app4 = new Vue({
+  el: '#app-4',
+  data: {
+    todos: [
+      { text: 'Learn JavaScript' },
+      { text: 'Learn Vue' },
+      { text: 'Build something awesome' }
+    ]
+  }
+})
+
+app4.todos.push({text: 'My Words'});
+
+var app6 = new Vue({
+  el: '#app-6',
+  data: {
+    message: 'Hello Vue!'
+  }
+})
+
+Vue.component('todo-item', {
+  props: ['todo'],
+  template: '<li>{{ todo.text }}</li>'
+})
+
+var app7 = new Vue({
+  el: '#app-7',
+  data: {
+    groceryList: [
+      { id: 0, text: 'Vegetables' },
+      { id: 1, text: 'Cheese' },
+      { id: 2, text: 'Whatever else humans are supposed to eat' }
+    ]
+  }
+})
+
+</script>
+
+
+
+<!-- TODO-LIST -->
+<div id="todo-list-example">
+  <form v-on:submit.prevent="addNewTodo">
+    <label for="new-todo">Add a todo</label>
+    <input
+      v-model="newTodoText"
+      id="new-todo"
+      placeholder="E.g. Feed the cat"
+    >
+    <button>Add</button>
+  </form>
+  <ul>
+    <li
+      is="todo-item"
+      v-for="(todo, index) in todos"
+      v-bind:key="todo.id"
+      v-bind:title="todo.title"
+      v-on:remove="todos.splice(index, 1)"
+    ></li>
+  </ul>
+</div>
+
+<script>
+Vue.component('todo-item', {
+  template: '\
+    <li>\
+      {{ title }}\
+      <button v-on:click="$emit(\'remove\')">Remove</button>\
+    </li>\
+  ',
+  props: ['title']
+})
+
+new Vue({
+  el: '#todo-list-example',
+  data: {
+    newTodoText: '',
+    todos: [
+      {
+        id: 1,
+        title: 'Do the dishes',
+      },
+      {
+        id: 2,
+        title: 'Take out the trash',
+      },
+      {
+        id: 3,
+        title: 'Mow the lawn'
+      }
+    ],
+    nextTodoId: 4
+  },
+  methods: {
+    addNewTodo: function () {
+      this.todos.push({
+        id: this.nextTodoId++,
+        title: this.newTodoText
+      })
+      this.newTodoText = ''
+    }
+  }
+})
+</script>
+
+<!-- tab-sample -->
+<!-- 
+<div id="dynamic-component-demo" class="demo">
+  <button
+    v-for="tab in tabs"
+    v-bind:key="tab"
+    v-bind:class="['tab-button', { active: currentTab === tab }]"
+    v-on:click="currentTab = tab"
+  >{{ tab }}</button>
+
+  <component
+    v-bind:is="currentTabComponent"
+    class="tab"
+  ></component>
+</div>
+
+<script>
+Vue.component('tab-home', { 
+	template: '<div>Home component</div>' 
+})
+Vue.component('tab-posts', { 
+	template: '<div>Posts component</div>' 
+})
+Vue.component('tab-archive', { 
+	template: '<div>Archive component</div>' 
+})
+
+new Vue({
+  el: '#dynamic-component-demo',
+  data: {
+    currentTab: 'Home',
+    tabs: ['Home', 'Posts', 'Archive']
+  },
+  computed: {
+    currentTabComponent: function () {
+      return 'tab-' + this.currentTab.toLowerCase()
+    }
+  }
+})
+</script>
+
+<style>
+.tab-button {
+  padding: 6px 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #f0f0f0;
+  margin-bottom: -1px;
+  /* margin-right: -1px; */
+}
+.tab-button:hover {
+  background: #e0e0e0;
+}
+.tab-button.active {
+  background: #e0e0e0;
+}
+.tab {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+</style>
+
+-->
+
+<!-- tab-sample2 -->
+<div id="dynamic-component-demo">
+  <button
+    v-for="tab in tabs"
+    v-bind:key="tab"
+    v-bind:class="['tab-button', { active: currentTab === tab }]"
+    v-on:click="currentTab = tab"
+  >{{ tab }}</button>
+
+  <keep-alive>
+    <component
+      v-bind:is="currentTabComponent"
+      class="tab"
+    ></component>
+  </keep-alive>
+</div>
+
+<script>
+Vue.component('tab-posts', { 
+  data: function () {
+  	return {
+      posts: [
+        { 
+        	id: 1, 
+          title: 'Cat Ipsum',
+          content: '<p>Dont wait for the storm to pass, dance in the rain kick up litter decide to want nothing to do with my owner today demand to be let outside at once, and expect owner to wait for me as i think about it cat cat moo moo lick ears lick paws so make meme, make cute face but lick the other cats. Kitty poochy chase imaginary bugs, but stand in front of the computer screen. Sweet beast cat dog hate mouse eat string barf pillow no baths hate everything stare at guinea pigs. My left donut is missing, as is my right loved it, hated it, loved it, hated it scoot butt on the rug cat not kitten around</p>'
+        },
+        { 
+        	id: 2, 
+          title: 'Hipster Ipsum',
+          content: '<p>Bushwick blue bottle scenester helvetica ugh, meh four loko. Put a bird on it lumbersexual franzen shabby chic, street art knausgaard trust fund shaman scenester live-edge mixtape taxidermy viral yuccie succulents. Keytar poke bicycle rights, crucifix street art neutra air plant PBR&B hoodie plaid venmo. Tilde swag art party fanny pack vinyl letterpress venmo jean shorts offal mumblecore. Vice blog gentrify mlkshk tattooed occupy snackwave, hoodie craft beer next level migas 8-bit chartreuse. Trust fund food truck drinking vinegar gochujang.</p>'
+        },
+        { 
+        	id: 3, 
+          title: 'Cupcake Ipsum',
+          content: '<p>Icing dessert souffle lollipop chocolate bar sweet tart cake chupa chups. Souffle marzipan jelly beans croissant toffee marzipan cupcake icing fruitcake. Muffin cake pudding souffle wafer jelly bear claw sesame snaps marshmallow. Marzipan souffle croissant lemon drops gingerbread sugar plum lemon drops apple pie gummies. Sweet roll donut oat cake toffee cake. Liquorice candy macaroon toffee cookie marzipan.</p>'
+        }
+      ],
+      selectedPost: null
+    }
+  },
+	template: `
+  	<div class="posts-tab">
+      <ul class="posts-sidebar">
+        <li
+          v-for="post in posts"
+          v-bind:key="post.id"
+          v-bind:class="{ selected: post === selectedPost }"
+					v-on:click="selectedPost = post"
+        >
+          {{ post.title }}
+        </li>
+      </ul>
+      <div class="selected-post-container">
+      	<div 
+        	v-if="selectedPost"
+          class="selected-post"
+        >
+          <h3>{{ selectedPost.title }}</h3>
+          <div v-html="selectedPost.content"></div>
+        </div>
+        <strong v-else>
+          Click on a blog title to the left to view it.
+        </strong>
+      </div>
+    </div>
+  `
+})
+
+Vue.component('tab-archive', { 
+	template: '<div>Archive component</div>' 
+})
+
+new Vue({
+  el: '#dynamic-component-demo',
+  data: {
+    currentTab: 'Posts',
+    tabs: ['Posts', 'Archive']
+  },
+  computed: {
+    currentTabComponent: function () {
+      return 'tab-' + this.currentTab.toLowerCase()
+    }
+  }
+})
+</script>
+<style>
+.tab-button {
+  padding: 6px 10px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  background: #f0f0f0;
+  margin-bottom: -1px;
+  margin-right: -1px;
+}
+.tab-button:hover {
+  background: #e0e0e0;
+}
+.tab-button.active {
+  background: #e0e0e0;
+}
+.tab {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+.posts-tab {
+  display: flex;
+}
+.posts-sidebar {
+  max-width: 40vw;
+  margin: 0;
+  padding: 0 10px 0 0;
+  list-style-type: none;
+  border-right: 1px solid #ccc;
+}
+.posts-sidebar li {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+}
+.posts-sidebar li:hover {
+  background: #eee;
+}
+.posts-sidebar li.selected {
+  background: lightblue;
+}
+.selected-post-container {
+  padding-left: 10px;
+}
+.selected-post > :first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+</style>
+
+<!-- transition/animation -->
+
+<div id="example-1">
+  <button @click="show = !show">
+    Toggle render
+  </button>
+  <transition name="slide-fade">
+    <p v-if="show">hello</p>
+  </transition>
+</div>
+
+<script>
+new Vue({
+  el: '#example-1',
+  data: {
+    show: true
+  }
+})
+</script>
+
+<style>
+/* enter、 leave アニメーションで異なる間隔やタイミング関数を利用することができます */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+</style>
+
+<div id="example-4">
+  <button @click="show = !show">
+    Toggle
+  </button>
+  <transition
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:leave="leave"
+    v-bind:css="false"
+  >
+    <p v-if="show">
+      Demo
+    </p>
+  </transition>
+</div>
+<script>
+new Vue({
+  el: '#example-4',
+  data: {
+    show: false
+  },
+  methods: {
+    beforeEnter: function (el) {
+      el.style.opacity = 0
+    },
+    enter: function (el, done) {
+      Velocity(el, { opacity: 1, fontSize: '1.4em' }, { duration: 300 })
+      Velocity(el, { fontSize: '1em' }, { complete: done })
+    },
+    leave: function (el, done) {
+      Velocity(el, { translateX: '15px', rotateZ: '50deg' }, { duration: 600 })
+      Velocity(el, { rotateZ: '100deg' }, { loop: 2 })
+      Velocity(el, {
+        rotateZ: '45deg',
+        translateY: '30px',
+        translateX: '30px',
+        opacity: 0
+      }, { complete: done })
+    }
+  }
+})
+</script>
+
+<div id="sudoku-demo" class="demo">
+  <h1>Lazy Sudoku</h1>
+  <p>Keep hitting the shuffle button until you win.</p>
+
+  <button @click="shuffle">
+    Shuffle
+  </button>
+  <transition-group name="cell" tag="div" class="container">
+    <div v-for="cell in cells" :key="cell.id" class="cell">
+      {{ cell.number }}
+    </div>
+  </transition-group>
+</div>
+
+<script>
+new Vue({
+  el: '#sudoku-demo',
+  data: {
+    cells: Array.apply(null, { length: 81 })
+    	.map(function (_, index) { 
+      	return {
+        	id: index,
+        	number: index % 9 + 1
+        }
+      })
+  },
+  methods: {
+  	shuffle: function () {
+    	this.cells = _.shuffle(this.cells)
+    }
+  }
+})
+</script>
+<style>
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 238px;
+  margin-top: 10px;
+}
+.cell {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 25px;
+  height: 25px;
+  border: 1px solid #aaa;
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+.cell:nth-child(3n) {
+  margin-right: 0;
+}
+.cell:nth-child(27n) {
+  margin-bottom: 0;
+}
+.cell-move {
+  transition: transform 1s;
+}
+</style>
+
+<div id="staggered-list-demo">
+  <input v-model="query">
+  <transition-group
+    name="staggered-fade"
+    tag="ul"
+    v-bind:css="false"
+    v-on:before-enter="beforeEnter"
+    v-on:enter="enter"
+    v-on:leave="leave"
+  >
+    <li
+      v-for="(item, index) in computedList"
+      v-bind:key="item.msg"
+      v-bind:data-index="index"
+    >{{ item.msg }}</li>
+  </transition-group>
+</div>
+
+<script>
+new Vue({
+  el: '#staggered-list-demo',
+  data: {
+    query: '',
+    list: [
+      { msg: 'Bruce Lee' },
+      { msg: 'Jackie Chan' },
+      { msg: 'Chuck Norris' },
+      { msg: 'Jet Li' },
+      { msg: 'Kung Fury' }
+    ]
+  },
+  computed: {
+    computedList: function () {
+      var vm = this
+      return this.list.filter(function (item) {
+        return item.msg.toLowerCase().indexOf(vm.query.toLowerCase()) !== -1
+      })
+    }
+  },
+  methods: {
+    beforeEnter: function (el) {
+      el.style.opacity = 0
+      el.style.height = 0
+    },
+    enter: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 1, height: '1.6em' },
+          { complete: done }
+        )
+      }, delay)
+    },
+    leave: function (el, done) {
+      var delay = el.dataset.index * 150
+      setTimeout(function () {
+        Velocity(
+          el,
+          { opacity: 0, height: 0 },
+          { complete: done }
+        )
+      }, delay)
+    }
+  }
+})
+</script>
+
+<a href="#" class="btn-flat-border">BUTTON</a>
+
+<style>
+.btn-flat-border {
+  display: inline-block;
+  padding: 0.3em 1em;
+  text-decoration: none;
+  color: #67c5ff;
+  border: solid 2px #67c5ff;
+  border-radius: 3px;
+  transition: .4s;
+}
+
+.btn-flat-border:hover {
+  background: #67c5ff;
+  color: white;
+}
+</style>
+
+<a href="#" class="btn-right-radius">BUTTON</a>
+
+<style>
+.btn-right-radius {
+  position: relative;
+  display: inline-block;
+  font-weight: bold;
+  padding: 0.25em 0.5em;
+  text-decoration: none;
+  color: #00BCD4;
+  background: #ECECEC;
+  border-radius: 0 15px 15px 0;
+  transition: .4s;
+}
+
+.btn-right-radius:hover {
+  background: #636363;
+}
+</style>
